@@ -1,4 +1,4 @@
-(ns little-schemer-in-clj.1_toys)
+(ns little-schemer-in-clj.1-toys)
 
 ;; atom?
 (defn atom? [x]
