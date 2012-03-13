@@ -1,0 +1,13 @@
+(ns little-schemer-in-clj.test.1_toys
+  (:use [little-schemer-in-clj.1_toys])
+  (:use [clojure.test]))
+
+(deftest test-atom?
+  (is (false? (atom? '())))
+  (is (false? (atom? {})))
+  (is (false? (atom? [])))
+  (is (false? (atom? #{})))
+  (is (true? (atom? :a)))
+  (is (true? (atom? "test")))
+  (is (true? (atom? \t)))
+  (is (true? (atom? 1))))
