@@ -1,7 +1,0 @@
-(ns little-schemer-in-clj.6-shadows)
-
-(defn numbered? [aexp]
-  (cond
-   (not (coll? aexp))
-   (= (first (rest aexp) (quote +)))
-   (= (first (rest aexp) (quote *)))
