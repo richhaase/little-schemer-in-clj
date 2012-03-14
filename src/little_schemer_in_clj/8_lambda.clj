@@ -46,19 +46,74 @@
 	(addR old new ((insertR-f f) old new (rest col)))
 	(cons (first col) ((insertR-f f) old new (rest col)))))))
 
-(defn addR [old new col]
+(defn addR [new old col]
   (concat [old new] col))
 
-(defn addL [old new]
+(defn addL [new old col]
   (concat [new old] col))
 
-(defn insert-g [adder]
-  (fn [old new col]
+(defn seqS [new old col]
+  (cons new col))
+
+(defn seqrem [new old col]
+  col)
+
+(defn insert-g [func]
+  (fn [new old col]
     (cond
      (empty? col) []
-     (= old (first col)) (adder old new ((insert-g adder) old new (rest col)))
-     :else (cons (first col) ((insert-g adder) old new (rest col))))))
+     (= old (first col))
+     (func new old ((insert-g func) new old (rest col)))
+     :else (cons (first col) ((insert-g func) new old (rest col))))))
 
-(defn insertL [old new col]
-  (insert-g addL))
+(defn insertL [new old col]
+  ((insert-g addL) new old col))
 	
+(defn insertR [new old col]
+  ((insert-g addR) new old col))
+
+(defn subst [new old col]
+  ((insert-g seqS) new old col))
+
+(defn rember [a col]
+  ((insert-g seqrem) false a col))
+
+(defn multirember-f [testfunc]
+  (fn [a col]
+    (cond
+     (empty? col) []
+     (= a (first col)) ((multirember-f testfunc) a (rest col))
+     :else (cons (first col) ((multirember-f testfunc) a (rest col))))))
+
+(def multirember-eq?
+     (multirember-f =))
+
+(def eq?-tuna
+     (eq?-c :tuna))
+
+(def multirember-tuna
+     (fn [func col]
+       (cond
+	(empty? col) []
+	(func (first col)) (multirember-tuna (rest col))
+	:else (cons (first col) (multirember-tuna (rest col))))))
+
+(defn evens-only* [l]
+  (cond
+   (empty? l) []
+   (coll? (first l)) (cons (evens-only* (first l)) (evens-only* (rest l)))
+   :else
+   (if (even? (first l))
+     (cons (first l) (evens-only* (rest l)))
+     (evens-only* (rest l)))))
+
+(defn ps-collect [newl prod sum]
+  (concat [sum prod] newl))
+
+(comment ;;done playing with this for the moment
+(defn evens-only&collector [l collector]
+  (cond
+   (empty? l) (collector [] 1 0)
+   (coll? (first l)) (evens-only&collector)))
+
+)
